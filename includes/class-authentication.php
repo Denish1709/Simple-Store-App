@@ -102,11 +102,13 @@ class Authentication
                 'password' => password_hash( $password, PASSWORD_DEFAULT )
             ]);
 
-            // redirect the user back to login.php
-            header('Location: /login.php');
+            // redirect the user back to /login
+            header('Location: /login');
             exit;
 
         }
 
     }
+
+    
 }

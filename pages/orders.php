@@ -1,14 +1,25 @@
-<?php 
+<?php
 
-session_start();
+    $orders = new Orders();
 
-require "includes/functions.php";
+    // make sure user alreadt logged in
+    if ( !isLoggedIn() ) {
+    // if user not logged in
+    header('Location: /login');
+    exit;
+    }
 
-//require the header part
- require "parts/header.php";
+    $user_id = $_SESSION['user']['id'];
 
-  ?>
-    <div class="container mt-5 mb-2 mx-auto" style="max-width: 900px;">
+
+?>
+<!doctype html>
+<html lang="en">
+  
+<?php $pageTitle = "Catologue"; include('./parts/header.php');?>
+
+  <section>
+  <div class="container mt-5 mb-2 mx-auto" style="max-width: 900px;">
       <div class="min-vh-100">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h1 class="h1">My Orders</h1>
@@ -27,12 +38,20 @@ require "includes/functions.php";
             </tr>
           </thead>
           <tbody>
+          <?php foreach( $orders->listOrders( $user_id ) as $order): ?>
             <tr>
-              <th scope="row">1</th>
+              <th scope="row"><?php echo $order['id']; ?></th>
               <td>
                 <ul class="list-unstyled">
-                  <li>Product 1</li>
-                  <li>Product 2</li>
+                <?php foreach(
+                  $orders->listProductsinOrder( $order['id'] )
+                  as $product
+                ) : ?>
+                  <li>
+                    <?php echo $product['name']; ?>
+                    (<?php echo $product['quantity']; ?>
+                  </li>
+                  <?php endforeach; ?>
                 </ul>
               </td>
               <td>$80</td>
@@ -46,14 +65,15 @@ require "includes/functions.php";
                   <li>Product 4</li>
                 </ul>
               </td>
-              <td>$60</td>
+              <td><?php echo $order['total_amount']; ?></td>
               <td>Completed</td>
             </tr>
+          <?php endforeach; ?>
           </tbody>
         </table>
 
         <div class="d-flex justify-content-between align-items-center my-3">
-          <a href="index.php" class="btn btn-light btn-sm"
+          <a href="/" class="btn btn-light btn-sm"
             >Continue Shopping</a
           >
         </div>
@@ -62,16 +82,16 @@ require "includes/functions.php";
       <!-- footer -->
       <div class="d-flex justify-content-between align-items-center pt-4 pb-2">
         <div class="text-muted small">
-          © 2022 <a href="index.php" class="text-muted">My Store</a>
+          © 2022 <a href="/" class="text-muted">My Store</a>
         </div>
         <div class="d-flex align-items-center gap-3">
-          <a href="login.php" class="btn btn-light btn-sm">Login</a>
-          <a href="signup.php" class="btn btn-light btn-sm">Sign Up</a>
-          <a href="orders.php" class="btn btn-light btn-sm">My Orders</a>
+          <a href="/login" class="btn btn-light btn-sm">Login</a>
+          <a href="/signup" class="btn btn-light btn-sm">Sign Up</a>
+          <a href="/orders" class="btn btn-light btn-sm">My Orders</a>
         </div>
       </div>
     </div>
-
-    <?php
-
-      require "parts/footer.php";
+  </section>
+<?php include('./parts/footer.php');?>
+</body>
+</html>
